@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:islami_c7_sat/home/hadeth/hadeth_model.dart';
+import 'package:islami_c7_sat/home/hadeth/hadeth_title_widget.dart';
 
 class HadethTab extends StatefulWidget {
   @override
@@ -18,11 +19,25 @@ class _HadethTabState extends State<HadethTab> {
             ? Center(
                 child: CircularProgressIndicator(),
               )
-            : ListView.builder(
-                itemBuilder: (_, index) {
-                  return Text(allHadethItems[index].title);
-                },
-                itemCount: allHadethItems.length,
+            : Column(
+                children: [
+                  Image.asset('assets/images/hadeth_header_image.png'),
+                  Expanded(
+                    child: ListView.separated(
+                        itemBuilder: (_, index) {
+                          return HadethTitleWidget(allHadethItems[index]);
+                        },
+                        itemCount: allHadethItems.length,
+                        separatorBuilder: (_, index) {
+                          return Container(
+                            margin: EdgeInsets.symmetric(horizontal: 24),
+                            height: 1,
+                            width: double.infinity,
+                            color: Theme.of(context).accentColor,
+                          );
+                        }),
+                  ),
+                ],
               ));
   }
 
@@ -32,7 +47,7 @@ class _HadethTabState extends State<HadethTab> {
     var allHadethContent = fileContent.trim().split("#");
     for (int i = 0; i < allHadethContent.length; i++) {
       String singleHadethConent = allHadethContent[i];
-      var singlHadethLines = singleHadethConent.trim().split('\r\n');
+      var singlHadethLines = singleHadethConent.trim().split('\n');
       String title = singlHadethLines[0];
       singlHadethLines.removeAt(0);
       String content = singlHadethLines.join("\n");

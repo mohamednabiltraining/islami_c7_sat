@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:islami_c7_sat/provider/settings_provider.dart';
 import 'package:islami_c7_sat/suraDetails/verse_item.dart';
+import 'package:provider/provider.dart';
 
 class SuraDetailsScreen extends StatefulWidget {
   static const String routeName = 'sura-details';
@@ -14,22 +16,22 @@ class _SuraDetailsScreenState extends State<SuraDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    var provider = Provider.of<SettingsProvider>(context);
     SuraDetailsScreenArgs args =
         (ModalRoute.of(context)?.settings.arguments) as SuraDetailsScreenArgs;
     // print(args.name);
     //print(args.index);
     if (verses.isEmpty) readFile(args.index);
     return Container(
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
             image: DecorationImage(
                 fit: BoxFit.fill,
-                image: AssetImage('assets/images/main_background.png'))),
+                image: AssetImage(provider.getMainBackground()))),
         child: Scaffold(
           appBar: AppBar(
             title: Text(args.name),
           ),
           body: Card(
-            color: Colors.white,
             elevation: 18,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10),
@@ -38,18 +40,18 @@ class _SuraDetailsScreenState extends State<SuraDetailsScreen> {
             child: verses.isEmpty
                 ? Center(child: CircularProgressIndicator())
                 : ListView.separated(
-                    itemBuilder: (_, index) {
-                      return VerseWidget(verses[index], index + 1);
-                    },
-                    itemCount: verses.length,
-                    separatorBuilder: (_, index) {
-                      return Container(
-                        margin: EdgeInsets.symmetric(horizontal: 24),
+                itemBuilder: (_, index) {
+                  return VerseWidget(verses[index], index + 1);
+                },
+                itemCount: verses.length,
+                separatorBuilder: (_, index) {
+                  return Container(
+                    margin: EdgeInsets.symmetric(horizontal: 24),
                         height: 1,
                         width: double.infinity,
-                        color: Theme.of(context).primaryColor,
+                        color: Theme.of(context).accentColor,
                       );
-                    }),
+                }),
           ),
         ));
   }
@@ -57,7 +59,7 @@ class _SuraDetailsScreenState extends State<SuraDetailsScreen> {
   void readFile(int index) async {
     String content =
         await rootBundle.loadString('assets/files/${index + 1}.txt');
-    var lines = content.split('\r\n');
+    var lines = content.split('\n');
     setState(() {
       verses = lines;
     });
